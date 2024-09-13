@@ -16,7 +16,19 @@
 
 Le Mars orbiter est une sonde qui avait pour but d’étudier le climat sur Mars, 125 millions d’euros ont été investi par la NASA dans ce projet. En 1998, après 9 mois de vol, l’appareil s'apprêtait à atterrir sur Mars, mais s’est simplement écrasé sur la planète. Après des analyses poussées, le problème d'atterrissage était dû à un bug logiciel dans un sous-programme du module préparant l’atterrissage. En effet, les données utilisées par un sous-traitant pour confectionner les réacteurs étaient anglo-saxonnes alors que la NASA utilisait des données métriques, ce problème d’unité de mesure est donc la raison du crash du Mars orbiter. On en déduit que ce bug était local et que le bon scénario s’était produit, la NASA n’aurait jamais découvert ce bug et n’aurait pas ouvert d’enquête.
 
+
 2 - Correction de la méthode Math.floorMod pour compatibilité JDK 11+
 
 https://github.com/apache/commons-collections/pull/178
 Le build d’un projet avec une version JDK 11 ou plus ne fonctionnait pas à cause de la méthode Math.floorMod. En JDK 8, celle-ci prend 2 arguments de type long et retourne la valeur absolue du reste de la division euclidienne du premier paramètre par le second. Or la version JDK 11 apporte une surcharge de cette méthode qui prend en paramètre un long et un int. Le code utilise la version précédente et rencontre donc des problèmes avec cette surcharge. Le contributeur à donc modifier le code pour forcer la conversion du paramètre en long. Ce bug est donc lié à la version de la bibliothèque standard de java, c’est un bug global. Le contributeur a modifié les tests existants pour la compatibilité avec JDK 11 +, mais il n’a pas ajouté de nouveaux tests.
+
+
+3 - Netflix : l'ingénierie du chaos
+
+Netflix a mis en place une technique appelée l'ingénierie du chaos, son but est de tester les systèmes informatiques permettant le bon fonctionnement de la plateforme de streaming. En simulant des pannes dans son infrastructure, Netflix cherche à tester la résilience de sa plateforme et ainsi pouvoir se préparer à des pannes inattendues et ne pas nuire à l’expérience de leur client. 
+La mise en place d'ingénierie du chaos nécessite plusieurs conditions clés. Il faut d'abord définir un état stable c'est-à-dire trouver ce que signifie le bon comportement du système, ainsi il sera possible de formuler des hypothèses claires sur l'impact des perturbations. De plus, les événements testés doivent refléter des défaillances réalistes, donc il faut que les expérimentations soient réalisées en production pour refléter les conditions réelles de la plateforme. 
+Pour cette expérience, 2 types de variables sont observées, les variables dépendantes du système mesurent l'impact des perturbations sur l'état stable du système, une de ces variables est le nombre d’utilisateurs connectés à la plateforme en temps réel.
+Les variables indépendantes quant à elles sont celles qui sont imprévisibles et correspondent à des événement imprévus comme des pannes.
+Ces expériences ont permis à Netflix d’observer des résultats concrets, l’identification des vulnérabilités de leur infrastructure a permis d’améliorer la résilience de leur système en les corrigeant.
+Cette méthode expérimentale mis en place par Netflix est aussi utilisée par d’autres entreprises telles que Amazon, Google, Microsoft, Facebook afin de tester la fiabilité de leurs systèmes.
+Ce type d’expérience peut être utile dans n’importe quelle autre compagnie et permettra de détecter une infinité de vulnérabilité dans l’infrastructure informatique d’une entreprise, que ce soit d’un point de vue de sécurité ou de la fonctionnalité de différents services.
