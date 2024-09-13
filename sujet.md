@@ -11,3 +11,12 @@
 5.  Shortly after the appearance of WebAssembly another paper proposed a mechanized specification of the language using Isabelle. The paper can be consulted here: https://www.cl.cam.ac.uk/~caw77/papers/mechanising-and-verifying-the-webassembly-specification.pdf. This mechanized specification complements the first formalization attempt from the paper. According to the author of this second paper, what are the main advantages of the mechanized specification? Did it help improving the original formal specification of the language? What other artifacts were derived from this mechanized specification? How did the author verify the specification? Does this new specification removes the need for testing?
 
 ## Answers
+
+1 - Article sur un bug logiciel important
+
+Le Mars orbiter est une sonde qui avait pour but d’étudier le climat sur Mars, 125 millions d’euros ont été investi par la NASA dans ce projet. En 1998, après 9 mois de vol, l’appareil s'apprêtait à atterrir sur Mars, mais s’est simplement écrasé sur la planète. Après des analyses poussées, le problème d'atterrissage était dû à un bug logiciel dans un sous-programme du module préparant l’atterrissage. En effet, les données utilisées par un sous-traitant pour confectionner les réacteurs étaient anglo-saxonnes alors que la NASA utilisait des données métriques, ce problème d’unité de mesure est donc la raison du crash du Mars orbiter. On en déduit que ce bug était local et que le bon scénario s’était produit, la NASA n’aurait jamais découvert ce bug et n’aurait pas ouvert d’enquête.
+
+2 - Correction de la méthode Math.floorMod pour compatibilité JDK 11+
+
+https://github.com/apache/commons-collections/pull/178
+Le build d’un projet avec une version JDK 11 ou plus ne fonctionnait pas à cause de la méthode Math.floorMod. En JDK 8, celle-ci prend 2 arguments de type long et retourne la valeur absolue du reste de la division euclidienne du premier paramètre par le second. Or la version JDK 11 apporte une surcharge de cette méthode qui prend en paramètre un long et un int. Le code utilise la version précédente et rencontre donc des problèmes avec cette surcharge. Le contributeur à donc modifier le code pour forcer la conversion du paramètre en long. Ce bug est donc lié à la version de la bibliothèque standard de java, c’est un bug global. Le contributeur a modifié les tests existants pour la compatibilité avec JDK 11 +, mais il n’a pas ajouté de nouveaux tests.
